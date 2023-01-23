@@ -2,7 +2,7 @@
   "listItems": [
     { "name": "Analytics Dashboard", "url": "dashboard-analytics.html", "icon": "home" },
     { "name": "eCommerce Dashboard", "url": "dashboard-ecommerce.html", "icon": "home" },
-    { "name": "Email", "url": "app-email.html", "icon": "mail" },
+    { "name": "Email", "url": "dashboard.html", "icon": "mail" },
     { "name": "Chat", "url": "app-chat.html", "icon": "message-square" },
     { "name": "Todo", "url": "app-todo.html", "icon": "check-square" },
     { "name": "Calendar", "url": "app-calendar.html", "icon": "calendar" },
