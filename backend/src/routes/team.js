@@ -28,5 +28,9 @@ router.delete("/api/delete/:id", async (req, res) => {
 router.post("/api/create/member", async (req, res) => {
     teamController.createMember(req, res)
 })
+//delete member
+router.delete("/api/deletemember/:id", async (req, res) => {
+    teamController.deleteMember(req, res)
+})
 
 module.exports = router

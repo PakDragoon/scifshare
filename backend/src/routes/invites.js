@@ -7,6 +7,10 @@ const inviteController = require("../controllers/invites.controller")
 router.post("/api/create", async (req, res) => {
   inviteController.create(req, res)
 })
+//resend invite
+router.post("/api/resend", async (req, res) => {
+  inviteController.resend(req, res)
+})
 //get invites
 router.get("/api/get/:id", async (req, res) => {
   inviteController.get(req, res)

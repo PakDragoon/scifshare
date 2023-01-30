@@ -10,8 +10,13 @@ controller.create = async (req, res) => {
       if (err) throw err; 
       connection.query(`INSERT INTO users (name, email, password) VALUES ('${name}', '${email}', '${passwordHash}')`, function (error, results, fields) {
         connection.release();
-        if (error) throw error;
-        res.send('user created')
+        // if (error) throw error;
+        if(error){
+          const { errno } = error
+          res.status(400).send({errno})
+          return
+        }
+        res.status(201).send('user created')
       });
     });
 }
@@ -24,10 +29,10 @@ controller.get = async (req, res) => {
       connection.release();
       if (error) throw error;
       if(results.length !== 1){
-        res.send("No user found")
+        res.status(404).send("No user found")
         return
       } else {
-        res.send(results[0])
+        res.status(200).send(results[0])
       }
     });
   });
@@ -41,16 +46,16 @@ controller.login = async (req, res) => {
       connection.release();
       if (error) throw error;
       if (results.length !== 1) {
-        res.send('user does not exist')
+        res.status(404).send('user does not exist')
         return
       }
       const isMatch = await bcrypt.compare(password, results[0].password)
       if (isMatch) {
         const token = generateAuthToken(results[0].id, results[0].name, results[0].email)
-        res.send({results, token})
+        res.status(200).send({results, token})
         return
       } else {
-        res.send('Incorrect email or password')
+        res.status(404).send('Incorrect email or password')
       }
     });
   });
@@ -64,22 +69,26 @@ controller.update = async (req, res) => {
       if (err) throw err; 
       connection.query(`Update users set name = '${name}', email = '${email}', password = '${passwordHash}', alternateEmail = '${alternateEmail}', dateFormat = '${dateFormat}', webhook = '${webhookUrl}' where id = ${id}`, function (error, results, fields) {
         connection.release();
-        if (error) throw error;
-        res.send('user updated')
+        // if (error) throw error;
+        if(error){
+          res.status(400).send(error)
+          return
+        }
+        res.status(200).send('user updated')
       });
     });
 }
 
-controller.delete = async (req, res) => {
-    const { id } = req.params
-    pool.getConnection(function(err, connection) {
-      if (err) throw err;
-      connection.query(`Delete from faq where id = ${id}`, function (error, results, fields) {
-        connection.release();
-        if (error) throw error;
-        res.send('faq edited')
-      });
-    });
-}
+// controller.delete = async (req, res) => {
+//     const { id } = req.params
+//     pool.getConnection(function(err, connection) {
+//       if (err) throw err;
+//       connection.query(`Delete from users where id = ${id}`, function (error, results, fields) {
+//         connection.release();
+//         if (error) throw error;
+//         res.send('user deleted')
+//       });
+//     });
+// }
 
 module.exports = controller

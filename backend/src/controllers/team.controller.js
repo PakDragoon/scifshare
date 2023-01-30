@@ -7,8 +7,13 @@ controller.create = async (req, res) => {
     if (err) throw err; 
     connection.query(`INSERT INTO teams (userId, name) VALUES (${userId}, '${name}')`, function (error, results, fields) {
       connection.release();
-      if (error) throw error;
-      res.send('team created')
+      // if (error) throw error;
+      if(error){
+        const { errno } = error
+        res.status(400).send({errno})
+        return
+      }
+      res.status(201).send('team created')
     });
   });
 }
@@ -20,7 +25,7 @@ controller.get = async (req, res) => {
     connection.query(`Select id, name from teams where userId = ${id}`, function (error, results, fields) {
       connection.release();
       if (error) throw error;
-      res.send(results[0])
+      res.status(200).send(results[0])
     });
   });
 }
@@ -32,7 +37,7 @@ controller.members = async (req, res) => {
     connection.query(`Select * from team_members where teamId = ${id}`, function (error, results, fields) {
       connection.release();
       if (error) throw error;
-      res.send(results)
+      res.status(200).send(results)
     });
   });
 }
@@ -45,7 +50,7 @@ controller.update = async (req, res) => {
     connection.query(`Update teams set name = '${name}' where id = ${id}`, function (error, results, fields) {
       connection.release();
       if (error) throw error;
-      res.send('team updated')
+      res.status(200).send('team updated')
     });
   });
 }
@@ -57,7 +62,19 @@ controller.delete = async (req, res) => {
     connection.query(`Delete from teams where id = ${id}`, function (error, results, fields) {
       connection.release();
       if (error) throw error;
-      res.send('team deleted')
+      res.status(200).send('team deleted')
+    });
+  });
+}
+
+controller.deleteMember = async (req, res) => {
+  const { id } = req.params
+  pool.getConnection(function(err, connection) {
+    if (err) throw err;
+    connection.query(`Delete from team_members where id = ${id}`, function (error, results, fields) {
+      connection.release();
+      if (error) throw error;
+      res.status(200).send('team member deleted')
     });
   });
 }

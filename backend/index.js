@@ -1,19 +1,19 @@
 const express = require("express")
-const path = require("path")
 const usersRouter = require('./src/routes/users')
 const brandRouter = require('./src/routes/branding')
 const teamRouter = require('./src/routes/team')
 const secretRouter = require('./src/routes/secret')
 const invitesRouter = require('./src/routes/invites')
 const folderRouter = require('./src/routes/folder')
+const fileRouter = require('./src/routes/file')
+const emailRouter = require('./src/routes/email')
 require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
 const app = express()
 const port = process.env.PORT || 8000
 
-//Result in JSON format
 app.use(express.json())
+app.set('trust proxy', true)
 
-//CORS
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*")
   res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
@@ -21,21 +21,17 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use(express.static(__dirname + '/public', { maxAge: '365d' }));
+
 app.use("/user", usersRouter)
 app.use("/brand", brandRouter)
 app.use("/team", teamRouter)
 app.use("/invite", invitesRouter)
 app.use("/secret", secretRouter)
 app.use("/folder", folderRouter)
+app.use("/file", fileRouter)
+app.use("/email", emailRouter)
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static("client/build"))
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "build", "index.html"))
-  })
-}
-
-//Check if server is running
 app.listen(port, () => {
   console.log("Server is up running " + port)
 })
